@@ -1,15 +1,20 @@
 %%PRÁCTICA 4 
 %%Del estudio de variables del sistema planteado podemos hallar las
 %%siguientes matrices de las variables del sistema
-A=[0 1 0 0;0 0 10 0;0 0 0 1;0 0 20 0];
+A=[0 1 0 0;0 0 -10 0;0 0 0 1;0 0 20 0];
 B=[0;1;0;-1];
 C=[1 0 0 0;0 0 1 0];
 %%a)Compensación por realimentación de estados
 %%comenzamos por determinar los polos deseados:
-p1 = [ -1 -1.1 -1.2 -1.3];
+p1 = [ -1 -1.1 -1.2 -1.3]
 %%Se hace uso entonces de la función "place" encargada de halla el vector
 %%de ganancias k
 k = place (A,B,p1)
+%%Se calcula la controlabilidad y observabilidad, para ver si se puede diseñar el regulador
+Ctrl=ctrb(A,B)
+contr = rank(Ctrl)
+Obs=obsv(A,C)
+observ = rank(Obs)
 %%b)Respuesta al escalón 
 %%sin compensar
 step(A,B,C,0);
@@ -19,8 +24,8 @@ g=ss(Ar,B,C,0);
 figure;
 step(g);
 %%c)Para los nuevos polos
-p2=[-10 -10.1 -10.2 -10.3];
-k2=place(A,B,p2);
+p2=[-10 -10.1 -10.2 -10.3]
+k2=place(A,B,p2)
 %%d)Respuesta al escalón  
 Ar2=A-B*k2;
 figure;
@@ -38,7 +43,7 @@ A=[0 1 0 0;0 0 4 0;0 0 0 1;0 0 140/3 0];
 B=[0;2;0;2];
 
 %% e) control LQR
-Q1=[1 0 0 0;0 0 0 0;0 0 1 0;0 0 0 0];
+Q1=[1 0 0 0;0 0 0 0;0 0 1 0;0 0 0 0]
 R=1;
 k= lqr(A,B,Q1,R)
 %% f) respuestas ante escalón de:
@@ -47,7 +52,7 @@ Ar=A-B*k;
 figure;
 step(Ar,B,C,0);
 %% g) nueva k
-Q2=[5000 0 0 0;0 0 0 0;0 0 100 0;0 0 0 0];
+Q2=[5000 0 0 0;0 0 0 0;0 0 100 0;0 0 0 0]
 k2= lqr(A,B,Q2,R)
 %%compensada con LQR2
 Ar2=A-B*k2;
