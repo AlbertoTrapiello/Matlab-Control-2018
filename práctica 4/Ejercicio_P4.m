@@ -1,5 +1,5 @@
 %%PRÁCTICA 4 
-%%Del estudio de variables del sistema planteado podemos hallar las
+%%Del estudio de variables del sistema planteado, podemos hallar las
 %%siguientes matrices de las variables del sistema
 A=[0 1 0 0;0 0 -10 0;0 0 0 1;0 0 20 0];
 B=[0;1;0;-1];
