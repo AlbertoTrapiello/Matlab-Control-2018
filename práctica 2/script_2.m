@@ -1,6 +1,7 @@
 
 %Ejemplo 1:
-
+%%bucle que recorre distintos valores de Kp para ver las variaciones del
+%%efecto proporcional sobre la realimentación de G
 G=tf(1,[1,3,3,1]);
 for Kp=[0.1:0.1:1], G_c=feedback(Kp*G,1); step(G_c), hold on; end
 figure; rlocus(G,[0,15]) 
@@ -15,8 +16,8 @@ figure; rlocus(G,[0,15])
 figure(3);
 
 %PI:
-G=tf(1,[1,3,3,1]); Kp=1; s=tf('s');
-for Ti=[0.7:0.1:1.5]
+G=tf(1,[1,3,3,1]); Kp=1; s=tf('s');%especifica un modelo en s
+for Ti=[0.7:0.1:1.5]%va variando Ti para ver ele efecto integral
 Gc=Kp*(1+1/Ti/s); G_c=feedback(G*Gc,1); step(G_c), hold on; end
 figure;
 
@@ -29,8 +30,8 @@ figure;
 figure(4);
 
 %PID
-Kp=1; Ti=1; s=tf('s');
-for Td=[0.1:0.2:2]
+Kp=1; Ti=1; s=tf('s');%especifica un modelo en s
+for Td=[0.1:0.2:2]%va variando Td para ver ele efecto integral
 Gc=Kp*(1+1/Ti/s+Td*s); G_c=feedback(G*Gc,1); step(G_c), hold on; end
 figure
 
@@ -39,8 +40,10 @@ figure
 %las que se encuentran por debajo del 1,2.
 
 %Ejemplo 2:
+%se dispone a colocar un filtro para reducir el efecto de la patada en la
+%consigna
 Td=1; Gc=Kp*(1+1/Ti/s+Td*s); step(feedback(G*Gc,1)), hold on
-for N=[100,1000,10000,1:10]
+for N=[100,1000,10000,1:10]%Se prueban distintas N para ver el efecto del filtro sobre el sistema
 Gc=Kp*(1+1/Ti/s+Td*s/(1+Td*s/N)); G_c=feedback(G*Gc,1); step(G_c)
 end
 figure; [y,t]=step(G_c); err=1-y; plot(t,err) 
@@ -76,9 +79,9 @@ figure;
 %Ahora a la FDT anterior se le aplica un control PI-D:
 
 G=tf(1,[1 2 1]); Kp = 3.829458496; Ti = 1.35; Td = 0.369; N=10; s=tf('s');
-Gc=Kp*(1+1/Ti/s+Td*s/(1+Td*s/N));
+Gc=Kp*(1+1/Ti/s+Td*s/(1+Td*s/N));%Regulador con filtro en el efecto derivativo
 G_c=feedback(G*Gc,1); Gc1=Kp*(1+1/s/Ti);
-H=((1+Kp/N)*Ti*Td*s^2+Kp*(Ti+Td/N)*s+Kp)/(Kp*(Ti*s+1)*(Td/N*s+1));
+H=((1+Kp/N)*Ti*Td*s^2+Kp*(Ti+Td/N)*s+Kp)/(Kp*(Ti*s+1)*(Td/N*s+1));%Realimentación de l regulador PI-D, tomando el efecto derivativo filtrado desde la salida
 G_c1=feedback(G*Gc1,H); step(G_c,G_c1); 
 figure;
 %Para este resultado podemos observar que la aproximación mediante el PI-D
@@ -93,7 +96,7 @@ figure;
 s=tf('s'); G = tf(1,[1 2 1]); 
 step(G); k=dcgain(G)
 L=0.76; T=2.72-L; [Gc1,Kp1]=zn(1,[k,L,T,10])
-[Gc2,Kp2,Ti2]=zn(2,[k,L,T,10])
+[Gc2,Kp2,Ti2]=zn(2,[k,L,T,10])%Ziegler Nichols requiere de key (1=P,2=PI,3=PID) y vars(K=ganancia,L=retraso,T=periodo,N=?)
 [Gc3,Kp3,Ti3,Td3]=zn(3,[k,L,T,10])
 
 %Con una respuesta en lazo cerrado de:
@@ -114,7 +117,7 @@ figure;
 
 s=tf('s'); G = tf(1,[1 2 1]); 
 [Gc1,Kp,Ti,Td]=zn(3,[k,L,T,N])
-[Gc2,Kp,Ti,Td]= chreswickpid (3,1,[k,L,T,N,0])
+[Gc2,Kp,Ti,Td]= chreswickpid (3,1,[k,L,T,N,0])%chreswickpid requiere (key=P,PI,PID,type(!=1 reduce perturbaciones),[k,L,T,N,Os=pico sobreosc])
 [Gc3,Kp,Ti,Td]= chreswickpid (3,1,[k,L,T,N,20])
 [Gc4,Kp,Ti,Td]= chreswickpid (3,2,[k,L,T,N,0]) 
 step(feedback(G*Gc1,1),feedback(G*Gc2,1),feedback(G*Gc3,1), feedback(G*Gc4,1),10); 
@@ -127,13 +130,14 @@ figure;
 
 %Ejercicio 7:
 
+figure;
 G=tf(1,[1 2 1]);
 [Gc1,Kp1]=cohenpid(1,[k,L,T,10])
 [Gc2,Kp2,Ti2]=cohenpid(2,[k,L,T,10])
 [Gc3,Kp3,Ti3,Td3]=cohenpid(5,[k,L,T,10])
 [Gc4,Kp4,Ti4,Td4]=cohenpid(3,[k,L,T,10]) 
-G_c1=feedback(G*Gc1,1); G_c2=feedback(G*Gc2,1);
-G_c3=feedback(G*Gc3,1); G_c4=feedback(G*Gc4,1);
-step(G_c1,G_c2,G_c3,G_c4,10) 
+G_cc_P=feedback(G*Gc1,1); G_cc_PI=feedback(G*Gc2,1);
+G_cc_PD=feedback(G*Gc3,1); G_cc_PID=feedback(G*Gc4,1);
+step(G_cc_P,G_cc_PI,G_cc_PD,G_cc_PID,10) 
 
 %Fianlmente con Cohenpid se pueden observar diferencias entre 

@@ -1,14 +1,14 @@
 %EJERCICIO 2
 %para este segundo primero se definen los vectores de los ceros, polos y
 %ganancia estática 
-z = [];
-p = [-1,-2,-3];
-k = 5/3;
+z = [];%ceros del sistema
+p = [-1,-2,-3];%polos del sostema en forma de vector
+k = 5/3;%ganancia del sistema
 
 %Mediante el uso de la función zp2ss que permite pasar del los polos y
 %ceros a la matrices del espacio de estados
 
-[A, B, C, D] = zp2ss (z, p, k)
+[A, B, C, D] = zp2ss (z, p, k)%pasa de ss a zp
 
 %RESPUESTA ANTE EL ESCALÓN
 figure;
@@ -26,10 +26,10 @@ lsim(ss(A,B,C,D),u,t)
 g1=ss(A,B,C,0);
 x0 = [1 0 0];
 figure;
-initial(g1, x0);
+initial(g1, x0)
 x0 = [0 1 0];
 figure;
-initial(g1, x0);
+initial(g1, x0)
 %COTNROLABILIDAD Y OBSERVABILIDAD
 Q=ctrb(g1)
 contr = rank(Q)

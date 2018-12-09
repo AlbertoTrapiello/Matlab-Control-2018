@@ -17,7 +17,7 @@ step(g1)
 t = 0:0.1:10;
 u = t;
 figure(2);
-lsim(g1,u,t);
+lsim(g1,u,t);%genera la salida en el timepo del sistema ante un entrada escalón 
 %RESPUESTA ENTRADA PARÁBOLA
 u = 0.5*t.^2;
 figure(3);
@@ -25,7 +25,7 @@ lsim(g1,u,t);
 %RESPUESTA ANTE ENTRADA NULA Y CNDIDICONES INICIALES 
 x0 = [0 1 0 0];
 figure(4);
-initial(g1, x0);
+initial(g1, x0);%calcula la respuesta dadas condiciones iniciales y el sistema en el espacio de estados
 %MATRICES CONTROLABILIDAD Y OBSERVABILIDAD
 Q=ctrb(g1)
 contr = rank(Q)
